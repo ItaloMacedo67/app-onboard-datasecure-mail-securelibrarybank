@@ -1,0 +1,26 @@
+use plugin_api::Plugin;
+
+pub struct MailPlugin;
+
+impl Plugin for MailPlugin {
+    fn name(&self) -> &'static str {
+        "SecureMail"
+    }
+    
+    fn description(&self) -> &'static str {
+        "Cliente de e-mail seguro e integrado"
+    }
+
+    fn init(&self) {
+        println!("Plugin SecureMail inicializado. Pronto para começar o uso.");
+}
+
+    fn execute(&self) -> Result<String, String> {
+        Ok("Abrindo a interface do SecureMail...".to_string())
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn plugin_create() -> *mut dyn Plugin {
+    Box::into_raw(Box::new(MailPlugin))
+}

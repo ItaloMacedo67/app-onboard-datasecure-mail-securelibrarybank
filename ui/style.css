@@ -1,0 +1,159 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #777aae 0%, #775ba3 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 1000px;
+    width: 100%;
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #777aae 0%, #775ba3 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.content {
+    padding: 40px;
+    min-height: 400px;
+}
+
+.plugins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.plugin-card {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.plugin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-color: #777aae;
+}
+
+.plugin-card.installed {
+    background: #d4edda;
+    border-color: #28a745;
+}
+
+.plugin-card h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+}
+
+.plugin-description {
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.plugin-status {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.status-available {
+    background: #007bff;
+    color: white;
+}
+
+.status-installed {
+    background: #28a745;
+    color: white;
+}
+
+.loading {
+    text-align: center;
+    color: #6c757d;
+    font-size: 1.2rem;
+    padding: 40px;
+}
+
+footer {
+    background: #f8f9fa;
+    padding: 30px;
+    border-top: 2px solid #e9ecef;
+}
+
+.installed-section {
+    text-align: center;
+}
+
+.installed-section h2 {
+    text-align: center;
+}
+
+.installed-section.hidden {
+    display: none;
+}
+
+.installed-section h3 {
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+.installed-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.installed-badge {
+    background: #28a745;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .plugins-grid {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+}
+

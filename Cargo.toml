@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = [
+    "src-tauri",
+    "plugin_api",
+    "meu_plugin_exemplo",
+    "plugin_mail"
+]
