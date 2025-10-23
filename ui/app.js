@@ -1,15 +1,21 @@
-const { invoke } = window.__TAURI__.tauri;
+let invoke;
 
 const availablePlugins = [
     {
+        name: "Onboarding Exemplo v1.0",
+        version: "1.0.0",
+        description: "Plugin de exemplo, demonstração e teste do onboarding",
+        installed: false
+    },
+    {
         name: "SecureMail",
-        version: "0.0.1",
+        version: "1.0.0",
         description: "Cliente de email",
         installed: false
     },
     {
         name: "DataSecure",
-        version: "0.0.1",
+        version: "1.0.0",
         description: "Proteção de dados em nuuvem",
         installed: false
     },
@@ -55,37 +61,47 @@ async function loadInstalledPlugins() {
 
 function updateUI() {
     const container = document.getElementById('plugins-container');
+    if (!container) return;
     container.innerHTML = '';
+
+    if (availablePlugins.length === 0) {
+        container.innerHTML = '<p>Nenhum plugin disponível.</p>';
+        return;
+    }
 
     availablePlugins.forEach(plugin => {
         const card = createPluginCard(plugin);
         container.appendChild(card);
     });
-
-    updateInstalledSection();
 }
 
 function createPluginCard(plugin) {
-    const card = document.createElement('div');
-    card.className = `plugin-card ${plugin.installed ? 'installed' : ''}`;
+    const item = document.createElement('div');
+    item.className = 'plugin-item';
 
-    card.innerHTML = `
-        <h3>${plugin.name}</h3>
-        <div class="plugin-version">Versão ${plugin.version}</div>
-        <p class="plugin-description">${plugin.description}</p>
-        <span class="plugin-status ${plugin.installed ? 'status-installed' : 'status-available'}">
-            ${plugin.installed ? 'Instalado' : 'Disponível'}
-        </span>
+    const statusText = plugin.installed ? 'Instalado' : 'Disponivel';
+
+    item.innerHTML = `
+    <img src="icons/32x32.png" class="plugin-icon" alt="Ícone do Plugin"/>
+        <div class="plugin-info">
+            <h3>${plugin.name}</h3>
+            <div class="version">Versão ${plugin.version}</div>
+            <p class="description">${plugin.description}</p>
+        </div>
+        <div class="plugin-status-badge">
+            ${statusText}
+        </div>
     `;
-
-    if (!plugin.installed) {
-        card.addEventListener('click', () => {
-            alert(`Funcionalidade de download será implementada em breve!\n\nPlugin: ${plugin.name}\n\nEm produção aqui baixario o arquivo .so/.dll`);
-        });
-    }
-
-    return card;
-}
+    return item;
+};
+//    if (!plugin.installed) {
+//        card.addEventListener('click', () => {
+//            alert(`Funcionalidade de download será implementada em breve!\n\nPlugin: ${plugin.name}\n\nEm produção aqui baixario o arquivo .so/.dll`);
+//        });
+//    }
+//
+//    return card;
+//}
 
 function updateInstalledSection() {
     const section = document.getElementById('installed-section');
@@ -107,6 +123,12 @@ function updateInstalledSection() {
     });
 }
 
-window.addEventListener(`DOMContentLoaded`, () => {
-    loadInstalledPlugins();
+window.addEventListener('DOMContentLoaded', async () => {
+    if (window.__TAURI__ && window.__TAURI__.tauri && window.__TAURI__.tauri.invoke) {
+        invoke = window.__TAURI__.tauri.invoke;
+        await loadInstalledPlugins();
+    } else {
+        console.error('Tauri não está disponivel.')
+        updateUI();
+    }
 });

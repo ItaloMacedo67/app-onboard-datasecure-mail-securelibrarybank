@@ -6,9 +6,13 @@ impl Plugin for MailPlugin {
     fn name(&self) -> &'static str {
         "SecureMail"
     }
+
+    fn version(&self) -> &'static str {
+        "1.0.0"
+    }
     
     fn description(&self) -> &'static str {
-        "Cliente de e-mail seguro e integrado"
+        "Cliente de email"
     }
 
     fn init(&self) {
