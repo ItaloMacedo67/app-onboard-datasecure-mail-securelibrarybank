@@ -28,21 +28,21 @@ impl PluginManager {
     }
     
     unsafe fn load_plugin(&mut self, path: &str) -> Result<(), String> {
-        let manifest_dir = env!("CARGO_MANIFEST_DIR");
-        let lib_path = std::path::Path::new(manifest_dir).join(path);
+        let manifest_dir: &'static str = env!("CARGO_MANIFEST_DIR");
+        let lib_path: std::path::PathBuf = std::path::Path::new(manifest_dir).join(path);
         
-        let lib = Library::new(&lib_path)
-            .map_err(|e| format!("Não foi possivel carregar o conteudo: {:?}: {}", lib_path, e))?;
+        let lib: Library = Library::new(&lib_path)
+            .map_err(|e: libloading::Error| format!("Não foi possivel carregar o conteudo: {:?}: {}", lib_path, e))?;
     
         self.loaded_libraries.push(lib);
-        let lib = self.loaded_libraries.last().unwrap();
-    
+        let lib: &Library = self.loaded_libraries.last().unwrap();
+
         let constructor: Symbol<PluginCreate> = lib
             .get(b"plugin_create")
-            .map_err(|e| format!("Não foi possivel encontrar o 'plugin_create': {}", e))?;
+            .map_err(|e: libloading::Error| format!("Não foi possivel encontrar o 'plugin_create': {}", e))?;
     
-        let plugin_ptr = constructor();
-        let plugin = Box::from_raw(plugin_ptr);
+        let plugin_ptr: *mut dyn Plugin = constructor();
+        let plugin: Box<dyn Plugin> = Box::from_raw(plugin_ptr);
     
         println!("Plugin '{}' carregado.", plugin.name());
         plugin.init();
@@ -55,7 +55,7 @@ impl PluginManager {
     fn get_plugin_infos(&self) -> Vec<PluginInfo> {
         self.plugins
             .iter()
-            .map(|p| PluginInfo {
+            .map(|p: &Box<dyn Plugin>| PluginInfo {
                 name: p.name().to_string(),
                 version: p.version().to_string(),
                 description: p.description().to_string(),
@@ -71,11 +71,11 @@ fn get_loaded_plugins(manager: State<Mutex<PluginManager>>) -> Vec<PluginInfo> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let mut manager = PluginManager::new();
+    let mut manager: PluginManager = PluginManager::new();
 
     #[cfg(debug_assertions)]
     {
-        let plugins_to_load = [
+        let plugins_to_load: [&'static str; 2] = [
             "../target/debug/libmeu_plugin_exemplo.so",
             "../target/debug/libplugin_mail.so",
         ];

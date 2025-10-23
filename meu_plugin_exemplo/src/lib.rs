@@ -1,6 +1,4 @@
 use plugin_api:: Plugin;
-
-
 pub struct OnboardingExemploPlugin;
 
 impl Plugin for OnboardingExemploPlugin {
@@ -27,7 +25,7 @@ impl Plugin for OnboardingExemploPlugin {
 
 #[no_mangle]
 pub unsafe extern "C" fn plugin_create() -> *mut dyn Plugin {
-    let plugin = OnboardingExemploPlugin;
+    let plugin: OnboardingExemploPlugin = OnboardingExemploPlugin;
     Box::into_raw(Box::new(plugin))
 }
 

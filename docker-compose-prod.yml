@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  prod-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    outputs:
+      - type: bind
+        source: ./dist
+        target: /workspace/src-tauri/target/release/bundle

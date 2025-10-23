@@ -1,0 +1,23 @@
+{
+    "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+    "name": "Tauri Rust Dev Container (Alpine)",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "../docker-compose-dev.yml"
+    ],
+    "service": "dev",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            }
+        }
+    },
+    "forwardPorts": [],
+    "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.cargo /workspace/target && cargo fetch",
+    "remoteUser": "vscode"
+}
