@@ -61,6 +61,8 @@ async function loadInstalledPlugins() {
 
 function updateUI() {
     const container = document.getElementById('plugins-container');
+    const centralBlock = document.getElementById('central-block');
+
     if (!container) return;
     container.innerHTML = '';
 
@@ -73,6 +75,34 @@ function updateUI() {
         const card = createPluginCard(plugin);
         container.appendChild(card);
     });
+
+    requestAnimationFrame(() => {
+        const items = document.querySelectorAll('.plugin-item');
+        items.forEach(item => {
+            item.classList.add('animate');
+        });
+    });
+
+    const centralBlockDelay = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--central-block-delay')) * 1000;
+    const centralBlockDuration = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--central-block-duration')) * 1000;
+    const pluginItemDelay = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--plugin-item-delay')) * 1000;
+    const pluginItemDuration = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--plugin-item-duration')) * 1000;
+    const pluginItemStagger = parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--plugin-item-stagger')) * 1000;
+
+    const totalAnimationTime = pluginItemDelay +
+                                (availablePlugins.length * pluginItemStagger) + 
+                                pluginItemDuration + 
+                                500;
+
+    setTimeout(() => {
+        centralBlock.classList.add('animation-complete');
+        document.body.style.overflowY = 'auto';
+    }, totalAnimationTime);
 }
 
 function createPluginCard(plugin) {
