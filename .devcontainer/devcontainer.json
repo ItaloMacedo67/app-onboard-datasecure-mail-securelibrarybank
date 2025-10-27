@@ -1,5 +1,4 @@
 {
-    "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
     "name": "Tauri Rust Dev Container (Alpine)",
     "dockerComposeFile": [
         "../docker-compose.yml",
@@ -7,10 +6,13 @@
     ],
     "service": "dev",
     "workspaceFolder": "/workspace",
+    "runServices": ["dev"],
     "customizations": {
         "vscode": {
             "extensions": [
-                
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "rust-lang.rust-analyzer"
             ],
             "settings": {
                 "terminal.integrated.defaultProfile.linux": "bash"

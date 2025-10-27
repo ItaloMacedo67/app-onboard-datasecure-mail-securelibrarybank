@@ -25,6 +25,8 @@ impl Plugin for MailPlugin {
 }
 
 #[no_mangle]
+#[allow(improper_ctypes_definitions)]
 pub unsafe extern "C" fn plugin_create() -> *mut dyn Plugin {
-    Box::into_raw(Box::new(MailPlugin))
+    let boxed: Box<dyn Plugin> = Box::new(MailPlugin);
+    Box::into_raw(boxed)
 }

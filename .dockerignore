@@ -1,0 +1,8 @@
+.git
+.gitignore
+.vscode
+.devcontainer
+target
+dist
+node_modules
+**/*.log

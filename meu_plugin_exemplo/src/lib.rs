@@ -24,14 +24,17 @@ impl Plugin for OnboardingExemploPlugin {
 }
 
 #[no_mangle]
+#[allow(improper_ctypes_definitions)]
 pub unsafe extern "C" fn plugin_create() -> *mut dyn Plugin {
     let plugin: OnboardingExemploPlugin = OnboardingExemploPlugin;
-    Box::into_raw(Box::new(plugin))
+    let boxed: Box<dyn Plugin> = Box::new(plugin);
+    Box::into_raw(boxed)
 }
 
 #[no_mangle]
+#[allow(improper_ctypes_definitions)]
 pub unsafe extern "C" fn plugin_destroy(ptr: *mut dyn Plugin) {
     if !ptr.is_null() {
-        drop(Box::from_raw(ptr));
+        let _ = Box::from_raw(ptr);
     }
 }

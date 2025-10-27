@@ -16,8 +16,10 @@ pub trait Plugin: Send + Sync {
     }
 }
 
+#[allow(improper_ctypes_definitions)]
 pub type PluginCreate = unsafe extern "C" fn() -> *mut dyn Plugin;
 
+#[allow(improper_ctypes_definitions)]
 pub type PluginDestroy = unsafe extern "C" fn(*mut dyn Plugin);
 
 

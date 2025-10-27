@@ -1,0 +1,48 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build application with Docker Compose
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose-prod.yml run --rm prod-builder
+
+      - name: List build artifacts
+        run: |
+          echo "Build artifacts in ./dist:"
+          ls -R ./dist
+
+      - name: Create Github Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Release automática gerada pelo Github Actions.
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset (AppImage)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/appimage/*.AppImage
+          asset_name: app-onboard-linux.AppImage
+          asset_content_type: application/vnd.appimage

@@ -40,10 +40,10 @@ impl PluginManager {
         let constructor: Symbol<PluginCreate> = lib
             .get(b"plugin_create")
             .map_err(|e: libloading::Error| format!("Não foi possivel encontrar o 'plugin_create': {}", e))?;
-    
+
         let plugin_ptr: *mut dyn Plugin = constructor();
         let plugin: Box<dyn Plugin> = Box::from_raw(plugin_ptr);
-    
+
         println!("Plugin '{}' carregado.", plugin.name());
         plugin.init();
     
