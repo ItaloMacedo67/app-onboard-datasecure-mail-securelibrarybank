@@ -12,7 +12,8 @@ docker compose exec dev bash
 
 ## Usando a extensão Dev Contianer do VScode:
 
-1. Procure pelo simbolo de duas setas (><) na barra de status do vscode, localizada no canto inferio esquerdo.
+1. Procure pelo simbolo de duas setas (><) na barra de
+tatus do vscode, localizada no canto inferio esquerdo.
 2. Clique nela e depois uma caixa ira aparecer na sua barra de pesquisa do workspace, selecione abrir container
 3. espere carregar todo o processo e seu container vai estar
 
