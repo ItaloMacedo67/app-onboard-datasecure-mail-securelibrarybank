@@ -1,18 +1,27 @@
-FROM alpine:3.20 AS base
+FROM rust:bookworm AS base
 
-RUN apk add --no-cache \
-    build-base curl git openssl-dev gtk+3.0-dev \
-    webkit2gtk-4.1-dev libayatana-indicator-dev librsvg-dev \
-    wget file sudo bash
+RUN apt-get update && apt-get install -y \
+    libwebkit2gtk-4.1-dev \
+    build-essential \
+    curl \
+    wget \
+    file \
+    libssl-dev \
+    libgtk-3-dev \
+    libayatana-appindicator3-dev \
+    librsvg2-dev \
+    sudo \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
+
+RUN cargo install tauri-cli --locked
 
 
 FROM base AS planner
 WORKDIR /workspace
 
-COPY .cargo ./.cargo
 COPY Cargo.toml Cargo.lock ./
 COPY src-tauri/Cargo.toml ./src-tauri/
 COPY plugin_api/Cargo.toml ./plugin_api/
@@ -28,20 +37,24 @@ RUN cargo build --release --workspace
 
 FROM base AS dev
 
-RUN adduser -D -s /bin/bash vscode && \
-    echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode
-
-RUN cp -r /root/.cargo /home/vscode/
-
-RUN su -l vscode -c "/home/vscode/.cargo/bin/rustup default stable"
-
-RUN chown -R vscode:vscode /home/vscode/.cargo
+RUN useradd -ms /bin/bash vscode && \
+    echo "vscode ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vscode && \
+    chmod 0440 /etc/sudoers.d/vscode
 
 USER vscode
 WORKDIR /workspace
 
-COPY --from=planner --chown=vscode:vscode /workspace/target ./target
+ENV CARGO_HOME="/home/vscode/.cargo"
 ENV PATH="/home/vscode/.cargo/bin:${PATH}"
+
+RUN rustup default stable
+
+RUN cargo install tauri-cli --locked
+
+RUN echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> /home/vscode/.bashrc
+
+COPY --from=planner --chown=vscode:vscode /workspace/target ./target
+
 CMD ["sleep", "infinity"]
 
 
@@ -55,6 +68,6 @@ COPY . .
 RUN cargo tauri build --verbose
 
 
-FROM scratch AS final
+FROM debian:bookworm-slim AS final
 WORKDIR /app
 COPY --from=build /workspace/src-tauri/target/release/bundle/appimage/*.AppImage .
