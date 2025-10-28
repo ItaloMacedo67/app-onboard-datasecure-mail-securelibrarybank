@@ -1,4 +1,5 @@
 let invoke;
+let currentSelectedIndex = 0;
 
 const availablePlugins = [
     {
@@ -71,10 +72,15 @@ function updateUI() {
         return;
     }
 
-    availablePlugins.forEach(plugin => {
-        const card = createPluginCard(plugin);
+    availablePlugins.forEach((plugin, index) => {
+        const card = createPluginCard(plugin, index);
         container.appendChild(card);
     });
+
+    if (availablePlugins.length > 0) {
+        const items = document.querySelectorAll('.plugin-item');
+        items[currentSelectedIndex].classList.add('selected');
+    }
 
     requestAnimationFrame(() => {
         const items = document.querySelectorAll('.plugin-item');
@@ -102,12 +108,15 @@ function updateUI() {
     setTimeout(() => {
         centralBlock.classList.add('animation-complete');
         document.body.style.overflowY = 'auto';
+        document.getElementById('selector').classList.add('visible');
+        updateSelectorPosition();
     }, totalAnimationTime);
 }
 
-function createPluginCard(plugin) {
+function createPluginCard(plugin, index) {
     const item = document.createElement('div');
     item.className = 'plugin-item';
+    item.dataset.index = index;
 
     const statusText = plugin.installed ? 'Instalado' : 'Disponivel';
 
@@ -122,6 +131,11 @@ function createPluginCard(plugin) {
             ${statusText}
         </div>
     `;
+
+    item.addEventListener('click', () => {
+        handleSelection(index, false);
+    });
+
     return item;
 };
 //    if (!plugin.installed) {
@@ -153,6 +167,44 @@ function updateInstalledSection() {
     });
 }
 
+function updateSelectorPosition() {
+    const selector = document.getElementById('selector');
+    const selectedItem = document.querySelector('.plugin-item.selected');
+    if (selector && selectedItem) {
+        selector.style.top = `${selectedItem.offsetTop}px`;
+        selector.style.height = `${selectedItem.offsetHeight}px`;
+    }
+}
+
+function handleSelection(newIndex, fromKeyboard = false) {
+    if (newIndex < 0 || newIndex >= availablePlugins.length) {
+        return;
+    }
+
+    const items = document.querySelectorAll('.plugin-item');
+
+
+    const oldSelectedItem = items[currentSelectedIndex];
+    if (oldSelectedItem) {
+        oldSelectedItem.classList.remove('selected');
+    }
+
+    currentSelectedIndex = newIndex;
+    const newSelectedItem = items[currentSelectedIndex];
+    if (newSelectedItem) {
+        newSelectedItem.classList.add('selected');
+        if (fromKeyboard) {
+            newSelectedItem.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+    }
+
+    setTimeout(updateSelectorPosition, 200);
+}
+
+
 window.addEventListener('DOMContentLoaded', async () => {
     if (window.__TAURI__ && window.__TAURI__.tauri && window.__TAURI__.tauri.invoke) {
         invoke = window.__TAURI__.tauri.invoke;
@@ -160,5 +212,23 @@ window.addEventListener('DOMContentLoaded', async () => {
     } else {
         console.error('Tauri não está disponivel.')
         updateUI();
+    }
+});
+
+window.addEventListener('keydown', (e) => {
+    const centralBlock = document.getElementById('central-block');
+    if (!centralBlock.classList.contains('animation-complete')) {
+        return;
+    }
+
+    switch (e.key) {
+        case 'ArrowUp':
+            e.preventDefault();
+            handleSelection(currentSelectedIndex - 1, true);
+            break;
+        case 'ArrowDown':
+            e.preventDefault();
+            handleSelection(currentSelectedIndex + 1, true);
+            break;
     }
 });
