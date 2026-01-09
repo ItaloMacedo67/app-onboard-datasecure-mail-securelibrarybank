@@ -47,7 +47,7 @@ body {
     border: 2px solid var(--selector-color);
     border-radius: 8px;
     z-index: 4;
-    transition: top 0.2s ease-in-out, height 0.2s ease-in-out;
+    transition: none;
     opacity: 0;
     pointer-events: none;
 }
@@ -222,8 +222,13 @@ body::after {
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin-bottom 0.3s ease-out;
+    transition: max-height 0.25s ease-out, opacity 0.25s ease-out, margin-bottom 0.25s ease-out;
     margin-bottom: 0;
+}
+
+.plugin-item.closing .plugin-info .version,
+.plugin-item.closing .plugin-info .description {
+    transition-duration: 0.1s;
 }
 
 .plugin-item.selected .plugin-info .version,

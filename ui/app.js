@@ -177,31 +177,63 @@ function updateSelectorPosition() {
 }
 
 function handleSelection(newIndex, fromKeyboard = false) {
-    if (newIndex < 0 || newIndex >= availablePlugins.length) {
+    if (newIndex < 0 || newIndex >= availablePlugins.length || newIndex === currentSelectedIndex) {
         return;
     }
 
     const items = document.querySelectorAll('.plugin-item');
-
-
     const oldSelectedItem = items[currentSelectedIndex];
+    const newSelectedItem = items[newIndex];
+
     if (oldSelectedItem) {
+        oldSelectedItem.classList.add('closing');
         oldSelectedItem.classList.remove('selected');
+        setTimeout(() => {
+            if (oldSelectedItem) oldSelectedItem.classList.remove('closing');
+        }, 100);
     }
 
     currentSelectedIndex = newIndex;
-    const newSelectedItem = items[currentSelectedIndex];
+    
     if (newSelectedItem) {
-        newSelectedItem.classList.add('selected');
-        if (fromKeyboard) {
-            newSelectedItem.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest'
-            });
-        }
+        newSelectedItem.scrollIntoView({
+            behavior: 'smooth',
+            //manter como center para melhor experiencia e não nearest
+            block: 'center'
+        });
     }
 
-    setTimeout(updateSelectorPosition, 200);
+    const selector = document.getElementById('selector');
+    if (!selector || !newSelectedItem) return;
+    
+    const initialHeight = newSelectedItem.offsetHeight;
+    const initialTop = newSelectedItem.offsetTop;
+    
+    selector.style.top = `${initialTop}px`;
+    selector.style.height = `${initialHeight}px`;
+
+    newSelectedItem.classList.add('selected');
+
+    let animationFrameId;
+    const updateSelectorDuringTransition = () => {
+        const currentHeight = newSelectedItem.offsetHeight;
+        const currentTop = newSelectedItem.offsetTop;
+
+        selector.style.top = `${currentTop}px`;
+        selector.style.height = `${currentHeight}px`;
+
+        animationFrameId = requestAnimationFrame(updateSelectorDuringTransition);
+    };
+
+    requestAnimationFrame(updateSelectorDuringTransition);
+
+    const stopUpdating = () => {
+        cancelAnimationFrame(animationFrameId);
+        newSelectedItem.removeEventListener('transitionend', stopUpdating);
+    };
+
+    newSelectedItem.addEventListener('transitionend', stopUpdating);
+
 }
 
 
