@@ -20,6 +20,6 @@
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.cargo /workspace/target && cargo fetch",
+    "postCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.cargo /workspace/target && (cargo tauri --version || cargo install tauri-cli) && cargo fetch",
     "remoteUser": "vscode"
 }
