@@ -1,7 +1,7 @@
 :root {
-    --background-color: #6a9da0;
-    --central-block-bg-color: #c9e9ea;
-    --line-color: #9abcc0;
+    --background-color: #78716e;
+    --central-block-bg-color: #F5F5F5;
+    --line-color: #6f9fa5;
     --font-size-titulo: 1.2rem;
     --font-size-pequeno: 0.8rem;
     --font-size-descricao: 0.9rem;
@@ -12,7 +12,7 @@
     --plugin-item-delay: 1.6s;
     --plugin-item-duration: 0.6s;
     --plugin-item-stagger: 0.1s;
-    --selector-color: #5a8a8d15;
+    --selector-color: #00fff715;
 }
 
 * {
@@ -89,7 +89,7 @@ body::after {
     background-color: var(--central-block-bg-color);
     width: 100%;
     height: 57vh;
-    padding: 20px 0;
+    padding: 0;
     overflow-y: auto;
     animation: expandCentralBlock var(--central-block-duration) ease-in-out var(--central-block-delay) forwards;
     transform: scaleY(0);
@@ -108,6 +108,8 @@ body::after {
     flex-direction: column;
     gap: 15px;
     width: 100%;
+    padding-top: calc(28.5vh - 40px);
+    padding-bottom: calc(28.5vh - 40px);
 }
 
 .plugin-item {

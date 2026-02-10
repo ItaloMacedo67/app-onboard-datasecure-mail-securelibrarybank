@@ -121,7 +121,13 @@ function createPluginCard(plugin, index) {
     const statusText = plugin.installed ? 'Instalado' : 'Disponivel';
 
     item.innerHTML = `
-    <img src="icons/32x32.png" class="plugin-icon" alt="Ícone do Plugin"/>
+    <div class="plugin-icon">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#6f9fa5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="#6f9fa5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="#6f9fa5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
         <div class="plugin-info">
             <h3>${plugin.name}</h3>
             <div class="version">Versão ${plugin.version}</div>
