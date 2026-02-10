@@ -4,19 +4,28 @@ services:
       context: .
       dockerfile: Dockerfile
       target: dev
-    volumes:
-      - .:/workspace:cached
-      - cargo-cache:/home/vscode/.cargo/registry
-      - target-cache:/workspace/target
+    image: app-onboard-dev:latest
     environment:
       - DISPLAY=${DISPLAY}
       - WEBKIT_DISABLE_COMPOSITING_MODE=1
+      - XAUTHORITY=/tmp/.docker.xauth
+    volumes:
+      - .:/workspace:cached
+      - cargo-cache:/home/vscode/.cargo
+      - rustup-cache:/home/vscode/.rustup
+      - target-cache:/workspace/target
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.ssh:/home/vscode/.ssh:ro
+      - ~/.Xauthority:/tmp/.docker.xauth:ro
     devices:
       - /dev/dri:/dev/dri
-    #cap_add:
-    #  - SYS_PTRACE
-    #/security_opt:
-    #  - seccomp:.devcontainer/seccomp.json
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_PTRACE
     stdin_open: true
     tty: true
     command: sleep infinity
+
+volumes:
+  rustup-cache:
