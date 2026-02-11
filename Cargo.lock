@@ -2547,6 +2547,8 @@ name = "plugin_mail"
 version = "0.1.0"
 dependencies = [
  "plugin_api",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

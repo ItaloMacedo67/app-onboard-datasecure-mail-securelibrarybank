@@ -142,6 +142,11 @@ function createPluginCard(plugin, index) {
         handleSelection(index, false);
     });
 
+    item.addEventListener('dblclick', () => {
+        handleSelection(index, false);
+        openPlugin(plugin.name);
+    });
+
     return item;
 };
 //    if (!plugin.installed) {
@@ -268,5 +273,67 @@ window.addEventListener('keydown', (e) => {
             e.preventDefault();
             handleSelection(currentSelectedIndex + 1, true);
             break;
+        case 'Enter':
+            e.preventDefault();
+            const selectedPlugin = availablePlugins[currentSelectedIndex];
+            if (selectedPlugin) {
+                openPlugin(selectedPlugin.name);
+            }
+            break;
     }
 });
+
+async function openPlugin(pluginName) {
+    if (!invoke) return;
+    try {
+        console.log(`Abrindo plugin: ${pluginName}`);
+        const response = await invoke('execute_plugin', { name: pluginName });
+        console.log("Resposta do plugin:", response);
+        
+        // Se for o SecureMail e a resposta for JSON, renderizar emails
+        if (pluginName === 'SecureMail') {
+             renderEmailClient(response);
+        } else {
+             alert(`Plugin executado: ${response}`);
+        }
+
+    } catch (error) {
+        console.error(`Erro ao executar plugin ${pluginName}:`, error);
+        alert(`Erro: ${error}`);
+    }
+}
+
+function renderEmailClient(jsonResponse) {
+    try {
+        const emails = JSON.parse(jsonResponse);
+        const container = document.getElementById('central-block');
+        
+        let html = `
+        <div id="email-client" style="background: white; width: 100%; height: 100%; padding: 20px; overflow-y: auto; border-radius: 8px; color: black;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>SecureMail Inbox</h2>
+                <button onclick="location.reload()" style="padding: 8px 16px; background: #6f9fa5; color: white; border: none; border-radius: 4px; cursor: pointer;">Voltar</button>
+            </div>
+            <div class="email-list">
+        `;
+        
+        emails.forEach(email => {
+            html += `
+            <div class="email-item" style="border-bottom: 1px solid #eee; padding: 10px 0; cursor: pointer;">
+                <div style="font-weight: bold; color: ${email.read ? '#666' : '#000'}">${email.sender}</div>
+                <div>${email.subject}</div>
+                <div style="font-size: 0.8em; color: gray;">${email.body.substring(0, 50)}...</div>
+                <div style="font-size: 0.8em; text-align: right; color: #aaa;">${email.date}</div>
+            </div>
+            `;
+        });
+        
+        html += `</div></div>`;
+        
+        container.innerHTML = html;
+        
+    } catch (e) {
+        alert("Erro ao processar dados do email: " + e);
+        console.log(jsonResponse);
+    }
+}

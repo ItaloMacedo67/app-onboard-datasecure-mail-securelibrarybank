@@ -62,11 +62,24 @@ impl PluginManager {
             })
             .collect()
     }
+
+    fn execute_plugin(&self, name: String) -> Result<String, String> {
+        if let Some(plugin) = self.plugins.iter().find(|p: &&Box<dyn Plugin>| p.name() == name) {
+            plugin.execute()
+        } else {
+            Err(format!("Plugin '{}' não encontrado.", name))
+        }
+    }
 }
 
 #[tauri::command]
 fn get_loaded_plugins(manager: State<Mutex<PluginManager>>) -> Vec<PluginInfo> {
     manager.lock().unwrap().get_plugin_infos()
+}
+
+#[tauri::command]
+fn execute_plugin(name: String, manager: State<Mutex<PluginManager>>) -> Result<String, String> {
+    manager.lock().unwrap().execute_plugin(name)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -95,7 +108,7 @@ pub fn run() {
             Target::new(TargetKind::Webview),
         ]).build())
         .manage(Mutex::new(manager))
-        .invoke_handler(tauri::generate_handler![get_loaded_plugins])
+        .invoke_handler(tauri::generate_handler![get_loaded_plugins, execute_plugin])
         .run(tauri::generate_context!())
         .expect("erro ao executar o tauri");
         
